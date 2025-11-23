@@ -1,5 +1,5 @@
 import { useCartStore } from "@/stores/cart.store";
-import type { productList } from "@/types/product.types";
+import type { productList } from "@/types/products.type";
 
 type CardProductProps = {
   product: productList

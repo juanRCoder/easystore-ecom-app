@@ -1,4 +1,4 @@
-import type { CartItemList } from "@/types/cart.types";
+import type { CartItemList } from "@/types/cart.type";
 import { z } from "zod";
 
 export const schemaCheckoutForm = z
