@@ -1,10 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-
-import { PrismaClient } from "../src/generated/prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from '../src/prisma'
 
 async function main() {
   const categories = [
