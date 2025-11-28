@@ -1,4 +1,3 @@
-import type { TypeCheckout } from "@/schemas/checkout.schema";
 import { createOrder } from "@/services/orders.service";
 import type { VoucherType } from "@/types/orders.type";
 import { useMutation } from "@tanstack/react-query";
@@ -10,7 +9,7 @@ type UseCreateOrderProps = {
 
 export const useCreateOrder = ({ onSuccess, onError }: UseCreateOrderProps) => {
   return useMutation({
-    mutationFn: async (orderData: TypeCheckout) => createOrder(orderData),
+    mutationFn: async (orderData: FormData) => createOrder(orderData),
     onSuccess(data) {
       if (onSuccess) onSuccess(data);
     },

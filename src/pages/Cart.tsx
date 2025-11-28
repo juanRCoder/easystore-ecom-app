@@ -18,13 +18,13 @@ const Cart = () => {
         <h2 className="text-2xl text-center flex-1 font-semibold">Carrito</h2>
       </div>
       {/* CONTENT */}
-      <div className='py-4 px-3 flex flex-col justify-center items-center gap-6 flex-1'>
+      <div className='py-4 px-3 flex flex-col gap-6 flex-1'>
         {items && items.length > 0 ? (
           items.map((item, i) => (
             <CartItem key={i} item={item} />
           ))
         ) : (
-          <div className="col-span-full text-center text-gray-500 select-none">
+          <div className="flex flex-1 items-center justify-center text-center text-gray-500 select-none">
             No hay productos en el carrito
           </div>
         )}

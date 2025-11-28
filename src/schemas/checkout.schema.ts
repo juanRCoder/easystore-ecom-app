@@ -8,7 +8,8 @@ export const schemaCheckoutForm = z
     typeOfDelivery: z.string().min(1, "Tipo de entrega obligatorio!"),
     guestUserAddress: z.string().optional(),
     typeOfPayment: z.string().min(1, "Tipo de pago obligatorio!"),
-    notes: z.string().optional()
+    imageVoucher: z.any().optional().nullable(),
+    notes: z.string().optional(),
   })
   .refine(
     (data) => {
@@ -25,5 +26,5 @@ export const schemaCheckoutForm = z
 
 export type TypeCheckoutForm = z.infer<typeof schemaCheckoutForm>;
 export type TypeCheckout = TypeCheckoutForm & {
-  products: Omit<CartItemList, "name" | "imageUrl">[]
-}
+  products: Omit<CartItemList, "name" | "imageUrl">[];
+};

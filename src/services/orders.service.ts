@@ -1,15 +1,11 @@
-import type { TypeCheckout } from "@/schemas/checkout.schema";
 
 const API = import.meta.env.VITE_API_DEV;
 
-export const createOrder = async (orderData: TypeCheckout) => {
+export const createOrder = async (orderData: FormData) => {
   try {
     const response = await fetch(`${API}/orders`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(orderData)
+      body: orderData
     });
 
     const result = await response.json();

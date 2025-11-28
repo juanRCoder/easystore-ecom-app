@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormInput } from "@/components/FormInput";
 import { FormInputRadio } from "@/components/FormInputRadio";
 import { useCreateOrder } from "@/hooks/useOrders";
-import { schemaCheckoutForm, type TypeCheckoutForm } from "@/schemas/checkout.schema";
+import { schemaCheckoutForm, type TypeCheckoutForm, type TypeCheckout } from "@/schemas/checkout.schema";
 import { useCartStore } from "@/stores/cart.store";
 import { useVoucherStore } from "@/stores/voucher.store";
 import { defaultCheckoutForm } from "@/utils/default";
@@ -47,17 +47,35 @@ const Checkout = () => {
     if (data.typeOfDelivery === 'local') {
       delete data.guestUserAddress
     }
-
-    const newOrder = {
+    const file = data.imageVoucher?.[0];
+    const newOrder: TypeCheckout = {
       ...data,
-      ...(data.typeOfPayment === 'bank' && { imageVoucher: null }),
+      imageVoucher: file,
       products: items.map(item => ({
         id: item.id,
         quantity: item.quantity,
         price: item.price
       }))
     }
-    createOrder(newOrder)
+
+    if (newOrder.typeOfPayment === "cash") {
+      delete newOrder.imageVoucher
+    }
+
+    const formData = new FormData()
+    for (const key in newOrder) {
+      const value = newOrder[key as keyof TypeCheckout]
+      if (key === "products") {
+        formData.append("products", JSON.stringify(value))
+        continue
+      }
+      if (value instanceof File) {
+        formData.append(key, value)
+        continue
+      }
+      formData.append(key, value)
+    }
+    createOrder(formData)
   }
 
   const totalProductInCart = items.reduce((acc, p) => (acc + p.price) * p.quantity, 0);
@@ -153,7 +171,14 @@ const Checkout = () => {
         </section>
         {typeOfPaymentValue === "bank" && (
           <section className="flex flex-col gap-3 p-3 text-gray-400 outline-1 outline-gray-200 mx-4 mt-3 rounded-lg">
-            proximamente agregado de voucher de pago
+            <span>Próximamente agregado de voucher de pago</span>
+            <label className="text-sm text-gray-500">Subir imagen</label>
+            <input
+              {...register("imageVoucher")}
+              type="file"
+              accept="image/*"
+              className="text-sm text-gray-300"
+            />
           </section>
         )}
         <section className="flex flex-col gap-3 px-3 pt-3">
