@@ -9,12 +9,14 @@ export const getAllProducts = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { searchTerm } = req.query;
+  const { searchTerm, isAdmin } = req.query;
   const term = typeof searchTerm === "string" ? searchTerm : undefined;
+  const isAdminFlag = typeof isAdmin === "string" && isAdmin === "true";
 
   try {
     const productList: productListDto[] = await ProductServices.findAllProducts(
-      term
+      term,
+      isAdminFlag
     );
 
     if (!productList.length) {
@@ -51,6 +53,27 @@ export const getProductsByCategoryId = async (
     return res.status(HttpStatus.OK).json(apiResponse(true, productList));
   } catch (error) {
     console.error("[Controller: getProductsByCategoryId]", error);
+    next(error);
+  }
+};
+
+export const createProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = req.body;
+    const imageProduct = req.file?.buffer;
+    await ProductServices.insertNewProduct(data, imageProduct);
+
+    return res.status(HttpStatus.CREATED).json(
+      apiResponse(true, {
+        message: "Producto creado exitosamente",
+      })
+    );
+  } catch (error) {
+    console.error("[Controller: createProduct]", error);
     next(error);
   }
 };
