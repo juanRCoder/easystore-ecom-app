@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Search, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ShopLayout from '@/layouts/ShopLayout';
@@ -22,15 +22,7 @@ const Products = () => {
   const debouncedSearch = useDebounce(searchTerm, 400);
   const { data: allProducts, isLoading: loadingAll, error: errorAll } = useProducts.AllProducts(debouncedSearch)
   const { data: productsByCategory, isLoading: loadingCategory, error: errorCategory } = useProducts.ProductsByCategory(categoryId)
-  const { data: allCategories, error: errorCategories } = useCategories.AllCategories()
-
-  const categoriesWithAll = useMemo(() => {
-    if (errorCategories) return allCategories?.payload || [];
-
-    const base = allCategories?.payload || [];
-    return [{ id: "", name: "Todos" }, ...base];
-  }, [allCategories, errorCategories]);
-
+  const { data: allCategories, isLoading: loadingCategories, error: errorCategories } = useCategories.AllCategories()
 
   const handleProductsByCategory = (ctg: categoryList) => {
     setOnCategory(ctg.name)
@@ -78,10 +70,13 @@ const Products = () => {
           />
         </div>
         <div className="scrollbar-custom flex gap-2 overflow-x-auto">
+          {loadingCategories && (
+            <span className='text-sm'>Cargando categorias...</span>
+          )}
           {errorCategories && (
             <span className="text-destructive">{errorCategories.message}</span>
           )}
-          {categoriesWithAll?.map((ctg: categoryList) => (
+          {allCategories?.payload.map((ctg: categoryList) => (
             <Button
               key={ctg.id}
               variant='outline'
@@ -96,6 +91,7 @@ const Products = () => {
       {loading && (
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
           <span className="block border-5 border-l-transparent w-12 h-12 rounded-full animate-spin" />
+          <span>Cargando productos...</span>
         </div>
       )}
       {error && (
