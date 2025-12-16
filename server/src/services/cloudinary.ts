@@ -8,7 +8,7 @@ export const uploadImageToCloudinary = async (
   public_id?: string
 ): Promise<UploadApiResponse> => {
   return new Promise((res, rej) => {
-    const finalPublicId = public_id || `voucher-${Date.now()}`;
+    const finalPublicId = public_id || `${Date.now()}`;
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder,
