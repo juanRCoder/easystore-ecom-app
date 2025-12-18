@@ -32,20 +32,12 @@ const create = async (
 ) => {
   const folder = `${process.env.ROOT_FOLDER}/voucher-images`;
 
-  const selectProducts = products.map((p) => p.id);
-  const dbProducts = await prisma.products.findMany({
-    where: { id: { in: selectProducts } },
-  });
-
   const orderProducts = products.map((pr) => {
-    const dbProduct = dbProducts.find((dpr) => dpr.id === pr.id);
-    const subtotal = dbProduct ? dbProduct.price * pr.quantity : 0;
-
     return {
       productId: pr.id,
       quantity: pr.quantity,
       price: pr.price,
-      subtotal,
+      subtotal: pr.price * pr.quantity,
     };
   });
 
@@ -54,10 +46,7 @@ const create = async (
     imgResult = await uploadImageToCloudinary(buffer, folder);
   }
 
-  const totalProducts = orderProducts.reduce(
-    (acc, op) => acc + (op.subtotal ?? 0),
-    0
-  );
+  const totalProducts = orderProducts.reduce((acc, op) => acc + op.subtotal, 0);
 
   const orderPayload = {
     ...orderData,
@@ -70,32 +59,29 @@ const create = async (
 
   const newOrder = await prisma.orders.create({
     data: orderPayload,
-  });
-
-  const voucher = await prisma.orders.findUnique({
-    where: { id: newOrder.id },
     include: {
       orderProducts: {
         include: { product: true },
       },
     },
   });
-  const voucherProducts = voucher?.orderProducts.map((op) => ({
+
+  const voucherProducts = newOrder?.orderProducts.map((op) => ({
     name: op.product.name,
     quantity: op.quantity,
     subtotal: op.subtotal,
   }));
 
-  const deliveryCost = voucher?.typeOfDelivery === "delivery" ? 3 : 0; // add 3 soles
+  const deliveryCost = newOrder?.typeOfDelivery === "delivery" ? 3 : 0; // add 3 soles
   return {
-    id: voucher?.id,
-    createdAt: formatVoucherDate(voucher?.createdAt.toISOString() || ""),
+    id: newOrder?.id,
+    createdAt: formatVoucherDate(newOrder?.createdAt.toISOString() || ""),
     products: voucherProducts,
     subtotal: totalProducts,
     deliveryCost,
-    total: (voucher?.total ?? 0) + deliveryCost,
-    guestUserName: voucher?.guestUserName,
-    typeOfDelivery: voucher?.typeOfDelivery,
+    total: (newOrder?.total ?? 0) + deliveryCost,
+    guestUserName: newOrder?.guestUserName,
+    typeOfDelivery: newOrder?.typeOfDelivery,
   };
 };
 
