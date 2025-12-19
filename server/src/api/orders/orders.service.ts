@@ -8,7 +8,7 @@ import { uploadImageToCloudinary } from "@server/services/cloudinary";
 dotenv.config();
 
 const getAll = async () => {
-  const allCategories = await prisma.orders.findMany({
+  return await prisma.orders.findMany({
     select: {
       id: true,
       guestUserName: true,
@@ -22,7 +22,6 @@ const getAll = async () => {
       status: true,
     },
   });
-  return allCategories;
 };
 
 const create = async (

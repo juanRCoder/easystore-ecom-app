@@ -70,8 +70,24 @@ const create = async (data: createProductDto, buffer?: Buffer) => {
   });
 };
 
+const getById = async (id: string) => {
+  return prisma.products.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      imageUrl: true,
+      price: true,
+      stock: true,
+      status: true,
+      Categories: { select: { id: true } },
+    },
+  });
+};
+
 export const ProductServices = {
   getAll,
   getByCategoryId,
   create,
+  getById,
 };

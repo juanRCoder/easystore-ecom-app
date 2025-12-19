@@ -3,7 +3,11 @@ import { HttpStatus } from "@server/constants/HttpStatus";
 import { apiResponse } from "@server/utils/apiResponse.utils";
 import { ProductServices } from "@server/api/products/products.service";
 
-export const getAll = async (req: Request, res: Response, next: NextFunction) => {
+export const getAll = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { searchTerm, isAdmin } = req.query;
   const term = typeof searchTerm === "string" ? searchTerm : undefined;
   const isAdminFlag = typeof isAdmin === "string" && isAdmin === "true";
@@ -34,7 +38,7 @@ export const getByCategoryId = async (
     if (!products.length) {
       return res.status(HttpStatus.NOT_FOUND).json(
         apiResponse(false, {
-          message: "No se encontraron productos para esta categoría",
+          message: "No products were found for this category",
         })
       );
     }
@@ -58,11 +62,34 @@ export const create = async (
 
     return res.status(HttpStatus.CREATED).json(
       apiResponse(true, {
-        message: "Producto creado exitosamente",
+        message: "Product created successfully",
       })
     );
   } catch (error) {
     console.error("[Controller: createProduct]", error);
+    next(error);
+  }
+};
+
+export const getById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  try {
+    const product = await ProductServices.getById(id);
+    if (!product) {
+      return res.status(HttpStatus.NOT_FOUND).json(
+        apiResponse(false, {
+          message: "Product not found",
+        })
+      );
+    }
+
+    return res.status(HttpStatus.OK).json(apiResponse(true, product));
+  } catch (error) {
+    console.error("[Controller: getProductById]", error);
     next(error);
   }
 };
