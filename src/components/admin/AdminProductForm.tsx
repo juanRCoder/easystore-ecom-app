@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Button,
   DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, Dialog,
@@ -6,9 +7,17 @@ import {
   ScrollArea,
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui"
+import { FormImg } from "@/components/FormImg";
 
 
 export const AdminProductForm = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    console.log("selectedFile changed:", imageFile);
+  }, [imageFile])
+
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='flex max-h-[min(600px,90vh)] flex-col gap-0 p-0 sm:max-w-xl '>
@@ -32,7 +41,7 @@ export const AdminProductForm = ({ open, onOpenChange }: { open: boolean; onOpen
                 <Field>
                   <FieldLabel>Estado</FieldLabel>
                   <Select defaultValue="available">
-                    <SelectTrigger id="checkout-7j9-exp-year-f59">
+                    <SelectTrigger id="checkout-7j9-exp-status-f59">
                       <SelectValue placeholder="Disponible" />
                     </SelectTrigger>
                     <SelectContent>
@@ -44,7 +53,7 @@ export const AdminProductForm = ({ open, onOpenChange }: { open: boolean; onOpen
                 <Field>
                   <FieldLabel>Categoría</FieldLabel>
                   <Select defaultValue="">
-                    <SelectTrigger id="checkout-7j9-exp-year-f59">
+                    <SelectTrigger id="checkout-7j9-exp-category-f59">
                       <SelectValue placeholder="" />
                     </SelectTrigger>
                     <SelectContent>
@@ -54,16 +63,24 @@ export const AdminProductForm = ({ open, onOpenChange }: { open: boolean; onOpen
                     </SelectContent>
                   </Select>
                 </Field>
-                {/* ACA COLOCALO ASI NOMAS PARA SUBIR LA IMAGEN Y PREVISUALIZAR */}
+                <Field>
+                  <FieldLabel>Imagen</FieldLabel>
+                  <FormImg
+                    onChange={(file) => setImageFile(file)}
+                    alt="Imagen del producto"
+                  />
+                </Field>
               </div>
             </DialogDescription>
             <DialogFooter className='px-6 pb-6 sm:justify-end'>
               <DialogClose asChild>
-                <Button variant='outline'>
+                <Button variant='outline' className="cursor-pointer">
                   Salir
                 </Button>
               </DialogClose>
-              <Button type='button'>Crear Producto</Button>
+              <Button type='button' className="cursor-pointer">
+                Crear Producto
+              </Button>
             </DialogFooter>
           </ScrollArea>
         </DialogHeader>
