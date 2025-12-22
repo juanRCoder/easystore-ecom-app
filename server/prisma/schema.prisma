@@ -18,7 +18,7 @@ model Products {
   name          String   @unique
   price         Float
   stock         Int
-  status        String
+  status        String   @default("available")  // available | unavailable
   imageUrl      String?
   imagePublicId String?
   categoryId    String
