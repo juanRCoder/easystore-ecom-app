@@ -88,7 +88,7 @@ const getById = async (id: string) => {
       price: true,
       stock: true,
       status: true,
-      Categories: { select: { id: true } },
+      Categories: { select: { id: true, name: true } },
     },
   });
 };

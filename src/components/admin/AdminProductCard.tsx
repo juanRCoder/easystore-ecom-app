@@ -35,7 +35,7 @@ export const AdminProductCard = ({ product }: AdminProductCardProps) => {
           <Trash2 className="text-destructive size-5" />
         </Button>
       </CardContent>
-      <AdminProductForm open={modalForm} onOpenChange={setModalForm} mode="edit"/>
+      <AdminProductForm open={modalForm} onOpenChange={setModalForm} mode="edit" id={product.id}/>
     </Card>
   )
 }

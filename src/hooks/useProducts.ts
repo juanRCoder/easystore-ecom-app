@@ -1,4 +1,4 @@
-import { getAll, getProductsByCategory } from "@/services/product.service";
+import { getAll, getByCategoryId, getById } from "@/services/product.service";
 import { useQuery } from "@tanstack/react-query";
 
 const AllProducts = (searchTerm?: string, isAdmin: boolean = false) => {
@@ -14,8 +14,8 @@ const AllProducts = (searchTerm?: string, isAdmin: boolean = false) => {
 
 const ProductsByCategory = (id: string) => {
   return useQuery({
-    queryKey: ["productsByCategory", id],
-    queryFn: () => getProductsByCategory(id),
+    queryKey: ["getByCategoryId", id],
+    queryFn: () => getByCategoryId(id),
     enabled: !!id,
     staleTime: 1000 * 60 * 5,
     retry: 1,
@@ -23,7 +23,19 @@ const ProductsByCategory = (id: string) => {
   });
 };
 
+const useGetById = (id: string) => {
+  return useQuery({
+    queryKey: ["getById", id],
+    queryFn: () => getById(id),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+    refetchOnWindowFocus: false,
+  })
+}
+
 export const useProducts = {
   AllProducts,
-  ProductsByCategory
+  ProductsByCategory,
+  useGetById
 };
